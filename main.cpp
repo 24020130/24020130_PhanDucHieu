@@ -1,4 +1,4 @@
-
+﻿
 
 #include "stdafx.h"
 #include "HeartItem.h"
@@ -28,7 +28,7 @@ TTF_Font*g_front_menu = NULL;
 
 void ShowVictoryScreen(SDL_Renderer* g_screen)
 {
-    // T?i h�nh ?nh chi?n th?ng 
+    // Tải hình ảnh chiến thắng 
     SDL_Texture* victoryImage = IMG_LoadTexture(g_screen, "img//victory.png");
     if (!victoryImage) {
         printf("Failed to load victory.png: %s\n", IMG_GetError());
@@ -87,24 +87,24 @@ void ShowVictoryScreen(SDL_Renderer* g_screen)
 
 bool ShowMenu(SDL_Renderer* g_screen)
 {
-    // T?i ?nh menu
+    // Tải ảnh menu
     SDL_Texture* menuBackground = IMG_LoadTexture(g_screen, "img//menugame.png");
     if (!menuBackground) return false;
 
-    // T?i ?nh n�t game
+    // Tải ảnh nút game
     SDL_Texture* startButton = IMG_LoadTexture(g_screen, "img//start_button.png");
     if (!startButton) return false;
 
-    // l?y k�ch th??c m�n h�nh
+    // lấy kích thước màn hình
     const int SCREEN_WIDTH = 1280;
     const int SCREEN_HEIGHT = 640;
 
-    // X�c ??nh v? tr� nut (C?n v�o gi?a m�n h�nh)
+    // Xác định vị trí nut (Căn vào giữa màn hình)
     SDL_Rect startRect;
-    startRect.w = 200;  // Chi?u r?ng c?a n�t
-    startRect.h = 80;   // chi?u cai c?a n�t
-    startRect.x = (SCREEN_WIDTH - startRect.w) / 2;  // C?n gi?a theo chi?u ngang
-    startRect.y = (SCREEN_HEIGHT - startRect.h) / 2; // C?n gi?a theo chi?u d?c
+    startRect.w = 200;  // Chiều rộng của nút
+    startRect.h = 80;   // chiều cai của nút
+    startRect.x = (SCREEN_WIDTH - startRect.w) / 2;  // Căn giữa theo chiều ngang
+    startRect.y = (SCREEN_HEIGHT - startRect.h) / 2; // Căn giữa theo chiều dọc
 
     SDL_Event e;
     while (true)
@@ -115,25 +115,25 @@ bool ShowMenu(SDL_Renderer* g_screen)
             {
                 SDL_DestroyTexture(menuBackground);
                 SDL_DestroyTexture(startButton);
-                return false; // Tho�t game
+                return false; // Thoát game
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN)
             {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
 
-                // ki?m tra n?u b?m v�o n�t 
+                // kiểm tra nếu bấm vào nút 
                 if (x >= startRect.x && x <= startRect.x + startRect.w &&
                     y >= startRect.y && y <= startRect.y + startRect.h)
                 {
                     SDL_DestroyTexture(menuBackground);
                     SDL_DestroyTexture(startButton);
-                    return true; // b?t ??u game
+                    return true; // bắt đầu game
                 }
             }
         }
 
-        // V? menu background v� n�t Start
+        // Vẽ menu background và nút Start
         SDL_RenderClear(g_screen);
         SDL_RenderCopy(g_screen, menuBackground, NULL, NULL);
         SDL_RenderCopy(g_screen, startButton, NULL, &startRect);
@@ -141,15 +141,15 @@ bool ShowMenu(SDL_Renderer* g_screen)
     }
 }
 
-Mix_Chunk* g_sound_bullet = NULL;        // �m thanh khi b?n ??n
-Mix_Chunk* g_sound_player_jump = NULL;   // �m thanh khi nh?y
-Mix_Chunk* g_sound_player_coin = NULL;   // �m thanh khi nh?t ti?n
-Mix_Chunk* g_sound_bullet_impact = NULL; // �m thanh khi ??n va ch?m
+Mix_Chunk* g_sound_bullet = NULL;        // Âm thanh khi b?n ??n
+Mix_Chunk* g_sound_player_jump = NULL;   // Âm thanh khi nh?y
+Mix_Chunk* g_sound_player_coin = NULL;   // Âm thanh khi nh?t ti?n
+Mix_Chunk* g_sound_bullet_impact = NULL; // Âm thanh khi ??n va ch?m
 
 bool InitData()
 {
     bool success = true;
-    int ret = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO); // Th�m AUDIO
+    int ret = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO); // Thêm AUDIO
     if (ret < 0) return false;
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
@@ -180,14 +180,14 @@ bool InitData()
             success = false;
         }
 
-        // Kh?i tao SDL_mixer
+        // Khởi tao SDL_mixer
         if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
         {
             printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
             success = false;
         }
 
-        // N?p c�c file �m thanh
+        // N?p các file âm thanh
         g_sound_bullet = Mix_LoadWAV("sound/gunshot.wav");
         g_sound_bullet_impact = Mix_LoadWAV("sound/gunShot3.wav");
         g_sound_explosion = Mix_LoadWAV("sound/Explosion.wav");
@@ -195,16 +195,16 @@ bool InitData()
         g_sound_player_jump = Mix_LoadWAV("sound/jump.wav");
         g_sound_player_coin = Mix_LoadWAV("sound/collectCoin.wav");
 
-        // nh?c n?n c?a background
+        // nhạc nền của background
         g_sound_background = Mix_LoadWAV("sound/background.wav");
 
-        // Ki?m tra xem  �m thanh c� th�nh c�ng kh�ng
+        // Kiểm tra xem  âm thanh có thành công không
         if (!g_sound_bullet || !g_sound_explosion || !g_sound_ex_main ||
             !g_sound_player_jump || !g_sound_background || !g_sound_player_coin ||
             !g_sound_bullet_impact)
         {
             printf("Failed to load sound effects! SDL_mixer Error: %s\n", Mix_GetError());
-            // Ch? in th�ng b�o, kh�ng c?n return false v� game v?n c� th? ch?y
+            // Ch? in thông báo, không c?n return false vì game v?n có th? ch?y
         }
 
         g_font_text = TTF_OpenFont("font//dlxfont.ttf", 15);
@@ -217,12 +217,12 @@ bool InitData()
     return success;
 }
 
-// B? sung ph??ng th?c gi?i ph�ng c�c t�i nguy�n �m thanh trong h�m close()
+// Bổ sung phương thức giải phóng các tài nguyên âm thanh trong hàm close()
 void close()
 {
     g_background.Free();
 
-    // Gi?i ph�ng �m thanh
+    // Giải phóng âm thanh
     Mix_FreeChunk(g_sound_bullet);
     Mix_FreeChunk(g_sound_bullet_impact);
     Mix_FreeChunk(g_sound_explosion);
@@ -239,7 +239,7 @@ void close()
     g_sound_player_coin = NULL;
     g_sound_background = NULL;
 
-    // ?�ng SDL_mixer
+    // ?óng SDL_mixer
     Mix_Quit();
 
     SDL_DestroyRenderer(g_screen);
@@ -426,9 +426,9 @@ int main(int argc, char* argv[])
             return 0;
         }
 
-        // Ph�t nh?c n?n sau khi ng??i ch?i b?t ??u game
+        // Phát nh?c n?n sau khi ng??i ch?i b?t ??u game
 #ifdef USE_AUDIO
-        Mix_PlayChannel(-1, g_sound_background, -1); // -1 l� l?p v� h?n
+        Mix_PlayChannel(-1, g_sound_background, -1); // -1 là l?p vô h?n
 #endif
 
         if (!LoadBackground())
@@ -462,7 +462,7 @@ int main(int argc, char* argv[])
         bossObject.set_xpos(xPosBoss);
         bossObject.set_ypos(10);
 
-        // Kh?i t?o c�c item c?c m�u
+        // Kh?i t?o các item c?c máu
         std::vector<HeartItem*> heart_items;
         for (int i = 0; i < 3; i++)
         {
@@ -474,8 +474,8 @@ int main(int argc, char* argv[])
                 continue;
             }
 
-            // ??t item c?c m�u ? c�c v? tr� kh�c nhau tr�n b?n ??
-            heart_item->set_x_pos(1000 + i * 1500);  // ?i?u ch?nh v? tr� theo b?n ??
+            // ??t item c?c máu ? các v? trí khác nhau trên b?n ??
+            heart_item->set_x_pos(1000 + i * 1500);  // ?i?u ch?nh v? trí theo b?n ??
             heart_item->set_y_pos(200);              // ?i?u ch?nh ?? cao
             heart_items.push_back(heart_item);
         }
@@ -510,9 +510,9 @@ int main(int argc, char* argv[])
 
         int num_die = 0;
         unsigned int mark_value = 0;
-        int time_after_boss = 200; // Th?i gian sau khi ti�u di?t boss
-        bool boss_appeared = false; // Bi?n theo d�i tr?ng th�i xu?t hi?n c?a boss
-        int old_money_val = 0; // Bi?n ?? theo d�i thay ??i ti?n
+        int time_after_boss = 200; // Th?i gian sau khi tiêu di?t boss
+        bool boss_appeared = false; // Bi?n theo dõi tr?ng thái xu?t hi?n c?a boss
+        int old_money_val = 0; // Bi?n ?? theo dõi thay ??i ti?n
 
         bool quit = false;
         bool restart_to_menu = false;
@@ -561,7 +561,7 @@ int main(int argc, char* argv[])
             player_power.Show(g_screen);
             player_money.Show(g_screen);
 
-            // Hi?n th? v� ki?m tra va ch?m v?i item c?c m�u
+            // Hi?n th? và ki?m tra va ch?m v?i item c?c máu
             for (int i = 0; i < heart_items.size(); i++)
             {
                 HeartItem* heart_item = heart_items.at(i);
@@ -577,18 +577,18 @@ int main(int argc, char* argv[])
                     bool is_col = SDLCommonFunc::CheckCollision(rect_player, rect_item);
                     if (is_col)
                     {
-                        // Ng??i ch?i ?� ?n ???c item c?c m�u
+                        // Ng??i ch?i ?ã ?n ???c item c?c máu
                         heart_item->setCollected(true);
 
                         // T?ng m?ng cho ng??i ch?i
                         player_power.InCrease();
 
-                        // Gi?m s? l?n ch?t (?? c�n b?ng v?i h? th?ng m?ng hi?n t?i)
+                        // Gi?m s? l?n ch?t (?? cân b?ng v?i h? th?ng m?ng hi?n t?i)
                         if (num_die > 0) {
                             num_die--;
                         }
 
-                        // Ph�t �m thanh khi nh?t ???c c?c m�u
+                        // Phát âm thanh khi nh?t ???c c?c máu
 #ifdef USE_AUDIO
                         Mix_PlayChannel(-1, g_sound_player_coin, 0);
 #endif
@@ -598,7 +598,7 @@ int main(int argc, char* argv[])
                 }
             }
 
-            // X? l� threats
+            // X? lý threats
             for (int i = 0; i < threats_list.size(); i++)
             {
                 ThreatsObject* obj_threat = threats_list.at(i);
@@ -610,7 +610,7 @@ int main(int argc, char* argv[])
                     obj_threat->MakeBullet(g_screen, SCREEN_WIDTH, SCREEN_HEIGHT);
                     obj_threat->Show(g_screen);
 
-                    // X? l� va ch?m ??n c?a threat v?i player
+                    // X? lý va ch?m ??n c?a threat v?i player
                     SDL_Rect rect_player = p_player.GetRectFrame();
                     bool is_col1 = false;
                     std::vector<BulletObject*> bullet_list = obj_threat->get_bullet_list();
@@ -624,7 +624,7 @@ int main(int argc, char* argv[])
                             {
                                 obj_threat->ResetBullet(p_bullet);
 
-                                // Ph�t �m thanh khi ??n threat tr�ng ng??i ch?i
+                                // Phát âm thanh khi đạn threat trúng người chơi
 #ifdef USE_AUDIO 
                                 Mix_PlayChannel(-1, g_sound_bullet_impact, 0);
 #endif
@@ -633,7 +633,7 @@ int main(int argc, char* argv[])
                         }
                     }
 
-                    // X? l� va ch?m player v� threat
+                    // Xử lý va chạm player và threat
                     SDL_Rect rect_threat = obj_threat->GetRectFrame();
                     bool is_col2 = SDLCommonFunc::CheckCollision(rect_player, rect_threat);
 
@@ -666,7 +666,7 @@ int main(int argc, char* argv[])
                         }
                         else
                         {
-                            // Chuy?n t?i m�n h�nh game over
+                            // Chuyển tới màn hình game over
                             quit = true;
                             restart_to_menu = true;
                             break; // Break from threats loop
@@ -690,7 +690,7 @@ int main(int argc, char* argv[])
                 BulletObject* p_bullet = bullet_arr.at(am);
                 if (p_bullet)
                 {
-                    // X? l� va ch?m c?a player v?i threats
+                    // Xử lý va chạm của player với threats
                     for (int i = 0; i < threats_list.size(); i++)
                     {
                         ThreatsObject* obj_threat = threats_list.at(i);
@@ -729,21 +729,21 @@ int main(int argc, char* argv[])
                         }
                     }
 
-                    // X? l� va ch?m ??n player v?i boss
-                    if (bossObject.GetHealth() > 0) {  // ch? ki?m tra n?u boss c�n s?ng
+                    // X? lý va ch?m ??n player v?i boss
+                    if (bossObject.GetHealth() > 0) {  // chỉ kiểm tra nếu boss còn sống
                         SDL_Rect boss_rect = bossObject.GetRectFrame();
                         bool b_col1 = SDLCommonFunc::CheckCollision(p_bullet->GetRect(), boss_rect) &&
                             p_bullet->get_is_move();
                         if (b_col1)
                         {
-                            // In ra debug v� ki?m tra
+                            // In ra debug và kiểm tra
                             printf("Hit Boss! Current Health: %d\n", bossObject.GetHealth());
 
 #ifdef USE_AUDIO 
                             Mix_PlayChannel(-1, g_sound_bullet_impact, 0);
                             Mix_PlayChannel(-1, g_sound_explosion, 0);
 #endif
-                            bossObject.DecreaseHealth(); // Gi?m m�u c?a boss
+                            bossObject.DecreaseHealth(); // Giảm máu của boss
                             for (int ex = 0; ex < 8; ex++)
                             {
                                 int x_pos = p_bullet->GetRect().x - frame_exp_width * 0.5;
@@ -757,14 +757,14 @@ int main(int argc, char* argv[])
                             p_player.RemoveBullet(am);
                             mark_value += 5; 
 
-                            // In ra debug sau khi gi?m m�u
+                            // In ra debug sau khi giảm máu
                             printf("After hit, Boss Health: %d\n", bossObject.GetHealth());
 
-                            if (bossObject.GetHealth() <= 0) {   // Boss ch?t
+                            if (bossObject.GetHealth() <= 0) {   // Boss chết
                                 printf("Boss defeated!\n");
                                 bossObject.set_think_time(10000); 
 
-                                // Ph�t �m thanh boss b? ti�u di?t
+                                // Phát âm thanh boss bị tiêu diệt
 #ifdef USE_AUDIO
                                 Mix_Volume(-1, MIX_MAX_VOLUME); 
                                 Mix_PlayChannel(-1, g_sound_explosion, 0);
@@ -775,15 +775,15 @@ int main(int argc, char* argv[])
                 }
             }
 
-            // Sau khi ti�u di?t boss, hi?nn th? th�ng b�o chi?n th?ng
+            // Sau khi tiêu diệt boss, hiệnn thị thông báo chiến thắng
             if (bossObject.GetHealth() <= 0)
             {
                 time_after_boss--;
                 if (time_after_boss <= 0)
                 {
-                    // D?ng t?t c? �m thanh tr??c khi hi?n th? m�n h�nh chi?n th?ng
+                    // D?ng t?t c? âm thanh tr??c khi hi?n th? màn hình chi?n th?ng
 #ifdef USE_AUDIO
-                    Mix_HaltChannel(-1); // D�ng t?t c?  c�c k�nh �m thanh
+                    Mix_HaltChannel(-1); // Dùng tất cả  các kênh âm thanh
 #endif
                     // Display victory screen and exit game
                     ShowVictoryScreen(g_screen);
@@ -792,8 +792,8 @@ int main(int argc, char* argv[])
                 }
             }
 
-            // Hi?n th? th?i gian
-            std::string str_time = "Th?i gian: ";
+            // Hiển thị thời gian
+            std::string str_time = "Thời gian: ";
             Uint32 time_val = SDL_GetTicks() / 1000;
             Uint32 val_time = 300 - time_val;
 
@@ -846,21 +846,21 @@ int main(int argc, char* argv[])
             money_count.loadFromRenderedText(g_font_text, g_screen);
             money_count.RenderText(g_screen, SCREEN_WIDTH * 0.5 - 250, 15);
 
-            // X? l� boss xu?t hi?n
+            // X? lý boss xu?t hi?n
             int val = MAX_MAP_X * TILE_SIZE - (ga_map.start_x_ + p_player.GetRect().x);
             if (val <= SCREEN_WIDTH)
             {
-                // Ph�t �m thanh khi boss xu?t hi?n l?n sau
+                // Phát âm thanh khi boss xuất hiện lần sau
                 if (!boss_appeared)
                 {
                     boss_appeared = true;
 #ifdef USE_AUDIO
-                    // gi?m �m l??ng c?a nh?c
+                    // giảm âm lượng của nhạc
                     Mix_Volume(-1, MIX_MAX_VOLUME / 2);
 #endif
                 }
 
-                // In ra v? tr� c?a boss
+                // In ra vị trí của boss
                 printf("Boss position: %f, %f\n", bossObject.get_xpos(), bossObject.get_ypos());
 
                 bossObject.SetMapXY(ga_map.start_x_, ga_map.start_y_);
@@ -868,10 +868,10 @@ int main(int argc, char* argv[])
                 bossObject.MakeBullet(g_screen, SCREEN_WIDTH, SCREEN_HEIGHT);
                 bossObject.Show(g_screen);
 
-                // In ra health c?a boss
+                // In ra health của boss
                 printf("Boss Health: %d\n", bossObject.GetHealth());
 
-                // X? l� va ch?m boss v?i ng??i ch?i
+                // Xử lý va chạm boss với người chơi
                 SDL_Rect rect_player = p_player.GetRectFrame();
                 std::vector<BulletObject*> boss_bullets = bossObject.get_bullet_list();
                 for (int bo = 0; bo < boss_bullets.size(); bo++)
@@ -922,8 +922,8 @@ int main(int argc, char* argv[])
                 // If game over, skip the rest of processing
                 if (restart_to_menu) break;
 
-                // X? l� va ch?m gi?a player v� boss
-                if (bossObject.GetHealth() > 0) {  // Ch? ki?m tra n?u boss c�n s?ng
+                // Xử lý va chạm giữa player và boss
+                if (bossObject.GetHealth() > 0) {  // Chỉ kiểm tra nếu boss còn sống
                     SDL_Rect boss_rect = bossObject.GetRectFrame();
                     bool is_col = SDLCommonFunc::CheckCollision(rect_player, boss_rect);
                     if (is_col)
@@ -964,10 +964,10 @@ int main(int argc, char* argv[])
                 }
             }
 
-            // C?p nh?t m�n h�nh
+            // Cập nhật màn hình
             SDL_RenderPresent(g_screen);
 
-            // Ki?m so�t FPS
+            // Kiểm soát FPS
             int imp_time = fps.get_ticks();
             int time_for_one_frame = 1000 / FRAMES_PER_SECOND;
             if (imp_time < time_for_one_frame)
@@ -978,7 +978,7 @@ int main(int argc, char* argv[])
 
         // Show game over screen with button before returning to menu
         if (restart_to_menu) {
-            // D�ng t?t c? �m thanh tr??cc khi hi?n th? m�n h�nh game over
+            // Dùng tất cả âm thanh trướcc khi hiện thị màn hình game over
 #ifdef USE_AUDIO
             Mix_HaltChannel(-1); 
 #endif
@@ -988,7 +988,7 @@ int main(int argc, char* argv[])
             game_running = false; // Exit game if not returning to menu
         }
 
-        // Gi?i ph�ng b? nh?
+        // Giải phóng bộ nhớ
         for (int i = 0; i < threats_list.size(); i++)
         {
             ThreatsObject* p_threat = threats_list.at(i);
@@ -1000,7 +1000,7 @@ int main(int argc, char* argv[])
         }
         threats_list.clear();
 
-        // Gi?i ph�ng b? nh? c?a c�c item c?c m�u
+        // Gi?i phóng b? nh? c?a các item c?c máu
         for (int i = 0; i < heart_items.size(); i++)
         {
             HeartItem* heart_item = heart_items.at(i);
